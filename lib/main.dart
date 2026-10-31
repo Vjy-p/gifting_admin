@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting_admin/app/routes/app_pages.dart';
@@ -33,6 +35,15 @@ class MyApp extends StatelessWidget {
         themeMode: themeController.themeMode,
         getPages: AppPages.pages,
         initialRoute: AppRoutes.splashScreen,
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          dragDevices: {
+            PointerDeviceKind.mouse,
+            PointerDeviceKind.stylus,
+            PointerDeviceKind.touch,
+            PointerDeviceKind.trackpad,
+            PointerDeviceKind.unknown,
+          },
+        ),
       ),
     );
   }
