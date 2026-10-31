@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:gifting_admin/core/theme/app_colors.dart';
 import 'package:gifting_admin/features/enquiry/controllers/enquiry_controller.dart';
 import 'package:gifting_admin/features/enquiry/models/enquiry_model.dart';
+import 'package:gifting_admin/features/enquiry/views/enquiry_details_screen.dart';
 
 class EnquiryTile extends GetView<EnquiryController> {
   const EnquiryTile({super.key, required this.enquiry});
@@ -17,21 +18,39 @@ class EnquiryTile extends GetView<EnquiryController> {
         children: [
           Expanded(
             child: Text(
-              enquiry.referenceCode ?? "",
-              style: Theme.of(context).textTheme.titleMedium,
+              enquiry.referenceCode ?? '',
+              style: TextStyle(fontSize: 12, color: AppColors.blackText),
             ),
           ),
           contactDetails(),
           Expanded(
             child: Text(
-              enquiry.products.join(', '),
+              enquiry.products.isNotEmpty
+                  ? '${enquiry.products.first.name} ${enquiry.products.length > 1 ? '...' : ''}'
+                  : '',
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 12, color: AppColors.blackText),
             ),
           ),
-          Expanded(child: Text(enquiry.source)),
-          Expanded(child: Text(enquiry.quantity.toString())),
-          Expanded(child: Text(enquiry.budget)),
+          Expanded(
+            child: Text(
+              enquiry.source,
+              style: TextStyle(fontSize: 12, color: AppColors.blackText),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              enquiry.quantity.toString(),
+              style: TextStyle(fontSize: 12, color: AppColors.blackText),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              enquiry.budget,
+              style: TextStyle(fontSize: 12, color: AppColors.blackText),
+            ),
+          ),
           // Expanded(
           //   child: Text(
           //     // DateFormat('dd MMM yyyy, hh:mm a')
@@ -46,9 +65,15 @@ class EnquiryTile extends GetView<EnquiryController> {
                 isExpanded: true,
                 isDense: true,
                 initialValue: enquiry.status,
-                style: TextStyle(fontSize: 14),
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock_outline, size: 18),
+                style: const TextStyle(fontSize: 12),
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.lock_outline, size: 16),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: 8,
+                  ),
+                  visualDensity: VisualDensity.compact,
                   // suffixIcon: IconButton(
                   //   onPressed: () {
                   //     controller.obscurePassword.toggle();
@@ -60,17 +85,47 @@ class EnquiryTile extends GetView<EnquiryController> {
                   //   ),
                   // ),
                 ),
-                items: const [
-                  DropdownMenuItem(value: 'New', child: Text('New')),
+                items: [
+                  DropdownMenuItem(
+                    value: 'New',
+                    child: Text(
+                      'New',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.blackText,
+                      ),
+                    ),
+                  ),
                   DropdownMenuItem(
                     value: 'Contacted',
-                    child: Text('Contacted'),
+                    child: Text(
+                      'Contacted',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.blackText,
+                      ),
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 'Converted',
-                    child: Text('Converted'),
+                    child: Text(
+                      'Converted',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.blackText,
+                      ),
+                    ),
                   ),
-                  DropdownMenuItem(value: 'Lost', child: Text('Lost')),
+                  DropdownMenuItem(
+                    value: 'Lost',
+                    child: Text(
+                      'Lost',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.blackText,
+                      ),
+                    ),
+                  ),
                 ],
                 onChanged: controller.updatingIds.contains(enquiry.id)
                     ? null
@@ -87,13 +142,31 @@ class EnquiryTile extends GetView<EnquiryController> {
           ),
           Expanded(
             child: TextButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Get.dialog(
+                  // barrierDismissible: false,
+                  barrierColor: AppColors.darkGreen.withValues(alpha: 0.4),
+
+                  Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    insetPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    backgroundColor: AppColors.background,
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: EnquiryDetailsScreen(enquiry: enquiry),
+                  ),
+                );
+              },
               iconAlignment: IconAlignment.end,
-              label: Text(
-                "View",
+              label: const Text(
+                'View',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 14,
                 fontWeight: FontWeight.bold,

@@ -6,6 +6,6 @@ SnackbarController customToast({required String title, required String text}) {
     title,
     text,
     snackPosition: SnackPosition.BOTTOM,
-    padding: EdgeInsets.all(16),
+    padding: const EdgeInsets.all(16),
   );
 }

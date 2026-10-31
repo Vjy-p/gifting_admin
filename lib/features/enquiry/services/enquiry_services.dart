@@ -1,4 +1,5 @@
 import 'package:gifting_admin/features/enquiry/models/enquiry_model.dart';
+import 'package:gifting_admin/features/enquiry/models/enquiry_stats_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class EnquiryServices {
@@ -32,5 +33,13 @@ class EnquiryServices {
         .from('enquiries')
         .update({'status': status})
         .eq('id', enquiryId);
+  }
+
+  Future<EnquiryStatsModel> getEnquiryStats() async {
+    final response = await _client.rpc('get_enquiry_stats');
+
+    return EnquiryStatsModel.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
   }
 }

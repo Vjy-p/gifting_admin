@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting_admin/core/widgets/custom_toast.dart';
+import 'package:gifting_admin/features/authentication/services/login_services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../app/routes/app_routes.dart';
@@ -63,7 +64,7 @@ class LoginController extends GetxController {
       );
 
       final user = response.user;
-      log("resp $response ");
+      log('resp $response ');
 
       if (user == null) {
         throw Exception('Login failed.');
@@ -83,10 +84,11 @@ class LoginController extends GetxController {
         );
         return;
       }
+      LoginServices.setAdminLoggedIn(value: true);
 
       Get.offAllNamed(AppRoutes.adminDashboard);
     } on AuthException catch (error, stackTree) {
-      log("Error login $error, $stackTree ");
+      log('Error login $error, $stackTree ');
       customToast(title: 'Login failed', text: error.message);
     } catch (_) {
       customToast(
@@ -99,6 +101,7 @@ class LoginController extends GetxController {
   }
 
   Future<void> logout() async {
+    LoginServices.setAdminLoggedIn(value: false);
     await _client.auth.signOut();
     Get.offAllNamed(AppRoutes.adminLogin);
   }

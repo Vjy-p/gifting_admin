@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting_admin/core/theme/app_colors.dart';
+import 'package:gifting_admin/core/theme/theme_controller.dart';
 import 'package:gifting_admin/features/authentication/controllers/login_controller.dart';
 
 class LoginScreen extends GetView<LoginController> {
@@ -10,6 +11,26 @@ class LoginScreen extends GetView<LoginController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Obx(
+            () => IconButton(
+              tooltip: ThemeController.to.isDarkMode
+                  ? 'Switch to Light Mode'
+                  : 'Switch to Dark Mode',
+              onPressed: () => ThemeController.to.toggleTheme(),
+              icon: Icon(
+                ThemeController.to.isDarkMode
+                    ? Icons.light_mode_outlined
+                    : Icons.dark_mode_outlined,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -23,7 +44,7 @@ class LoginScreen extends GetView<LoginController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.eco_outlined,
                         size: 48,
                         color: AppColors.primary,
