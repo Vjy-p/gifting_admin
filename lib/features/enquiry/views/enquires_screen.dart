@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting_admin/core/theme/app_colors.dart';
 import 'package:gifting_admin/core/theme/theme_controller.dart';
+import 'package:gifting_admin/features/dashboard/widgets/logout_dialog_box.dart';
 import 'package:gifting_admin/features/enquiry/controllers/enquiry_controller.dart';
 import 'package:gifting_admin/features/enquiry/models/enquiry_model.dart';
 import 'package:gifting_admin/features/enquiry/views/enquiry_box_tile.dart';
@@ -18,6 +21,7 @@ class EnquiresScreen extends GetView<EnquiryController> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isMobile = constraints.maxWidth <= 900;
+          log('width ${constraints.maxWidth}');
           return Padding(
             padding: const EdgeInsets.all(20),
             child: Obx(() {
@@ -64,34 +68,6 @@ class EnquiresScreen extends GetView<EnquiryController> {
                                 mainAxisSize: MainAxisSize.min,
                                 spacing: 8,
                                 children: [
-                                  Obx(
-                                    () => IconButton(
-                                      tooltip: ThemeController.to.isDarkMode
-                                          ? 'Switch to Light Mode'
-                                          : 'Switch to Dark Mode',
-                                      onPressed:
-                                          () => ThemeController.to.toggleTheme(),
-                                      style: IconButton.styleFrom(
-                                        backgroundColor: AppColors.surface,
-                                        foregroundColor: AppColors.primary,
-                                        tapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        visualDensity: VisualDensity.compact,
-                                        side: BorderSide(
-                                          color: AppColors.border,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      icon: Icon(
-                                        ThemeController.to.isDarkMode
-                                            ? Icons.light_mode_outlined
-                                            : Icons.dark_mode_outlined,
-                                      ),
-                                    ),
-                                  ),
                                   IconButton(
                                     tooltip: 'Download all enquiries as CSV',
                                     onPressed:
@@ -102,15 +78,53 @@ class EnquiresScreen extends GetView<EnquiryController> {
                                       tapTargetSize:
                                           MaterialTapTargetSize.shrinkWrap,
                                       visualDensity: VisualDensity.compact,
-                                      side: BorderSide(
-                                        color: AppColors.border,
-                                      ),
+                                      side: BorderSide(color: AppColors.border),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
                                     icon: const Icon(Icons.download_rounded),
                                   ),
+                                  if (MediaQuery.of(context).size.width <
+                                      750) ...[
+                                    Obx(
+                                      () => IconButton(
+                                        tooltip: ThemeController.to.isDarkMode
+                                            ? 'Switch to Light Mode'
+                                            : 'Switch to Dark Mode',
+                                        onPressed: () =>
+                                            ThemeController.to.toggleTheme(),
+                                        style: IconButton.styleFrom(
+                                          backgroundColor: AppColors.surface,
+                                          foregroundColor: AppColors.primary,
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          visualDensity: VisualDensity.compact,
+                                          side: BorderSide(
+                                            color: AppColors.border,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                        icon: Icon(
+                                          ThemeController.to.isDarkMode
+                                              ? Icons.light_mode_outlined
+                                              : Icons.dark_mode_outlined,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      tooltip: 'Sign out',
+                                      onPressed: () {
+                                        openDialogBox();
+                                      },
+                                      icon: const Icon(Icons.logout),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ],
@@ -149,6 +163,7 @@ class EnquiresScreen extends GetView<EnquiryController> {
                           ),
                           const SizedBox(height: 20),
                           SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: controller.statuses.map((status) {
@@ -186,14 +201,16 @@ class EnquiresScreen extends GetView<EnquiryController> {
   }
 
   Widget mobileWidget({required List<EnquiryModel> items}) {
-    return ListView.separated(
-      itemCount: items.length,
-      physics: const BouncingScrollPhysics(),
-      separatorBuilder: (_, _) => const Divider(),
-      itemBuilder: (context, index) {
-        return EnquiryBoxTile(enquiry: items[index]);
-      },
-    );
+    return items.isEmpty
+        ? const Center(child: Text('No enquiries found.'))
+        : ListView.separated(
+            itemCount: items.length,
+            physics: const BouncingScrollPhysics(),
+            separatorBuilder: (_, _) => const Divider(),
+            itemBuilder: (context, index) {
+              return EnquiryBoxTile(enquiry: items[index]);
+            },
+          );
   }
 
   Widget webWidget({required List<EnquiryModel> items}) {

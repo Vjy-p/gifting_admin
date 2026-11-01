@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gifting_admin/features/catalogues/models/product_model.dart';
 import 'package:gifting_admin/features/catalogues/services/product_services.dart';
-import 'package:gifting_admin/features/enquiry/models/product_model.dart';
 
 class CatalogueController extends GetxController {
   CatalogueController({ProductServices? repository})

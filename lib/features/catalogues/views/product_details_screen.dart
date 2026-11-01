@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting_admin/core/theme/app_colors.dart';
-import 'package:gifting_admin/features/enquiry/models/product_model.dart';
+import 'package:gifting_admin/features/catalogues/models/product_model.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   const ProductDetailsScreen({super.key, required this.product});
@@ -11,6 +13,7 @@ class ProductDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(20),
       child: Center(
         child: ConstrainedBox(
@@ -45,6 +48,7 @@ class ProductDetailsScreen extends StatelessWidget {
         child: Icon(Icons.card_giftcard, size: 56, color: AppColors.primary),
       );
     }
+    log('image url $imageUrl');
 
     return Container(
       decoration: BoxDecoration(

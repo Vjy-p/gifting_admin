@@ -4,8 +4,32 @@ import 'package:gifting_admin/core/theme/app_colors.dart';
 import 'package:gifting_admin/core/theme/theme_controller.dart';
 import 'package:gifting_admin/features/authentication/controllers/login_controller.dart';
 
-class LoginScreen extends GetView<LoginController> {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  FocusNode emailFocus = FocusNode();
+  final passwordController = TextEditingController();
+  FocusNode passwordFocus = FocusNode();
+
+  bool obscurePassword = true;
+
+  final controller = Get.find<LoginController>();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    emailFocus.dispose();
+    passwordFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +59,7 @@ class LoginScreen extends GetView<LoginController> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(
-            key: controller.formKey,
+            key: formKey,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
               child: Card(
@@ -62,24 +86,19 @@ class LoginScreen extends GetView<LoginController> {
                       ),
                       const SizedBox(height: 28),
                       TextFormField(
-                        controller: controller.emailController,
+                        controller: emailController,
                         keyboardType: TextInputType.emailAddress,
-                        focusNode: controller.emailFocus,
+                        focusNode: emailFocus,
                         onEditingComplete: () {
-                          controller.emailFocus.unfocus();
-                          controller.passwordFocus.requestFocus();
+                          emailFocus.unfocus();
+                          passwordFocus.requestFocus();
                         },
                         onFieldSubmitted: (value) {
-                          controller.emailFocus.unfocus();
-                          controller.passwordFocus.requestFocus();
-                        },
-                        onSaved: (newValue) {
-                          controller.emailFocus.unfocus();
-                          controller.passwordFocus.requestFocus();
+                          emailFocus.unfocus();
+                          passwordFocus.requestFocus();
                         },
                         onTapOutside: (event) {
-                          controller.emailFocus.unfocus();
-                          controller.passwordFocus.requestFocus();
+                          FocusScope.of(context).unfocus();
                         },
                         autofillHints: const [AutofillHints.username],
                         decoration: const InputDecoration(
@@ -89,36 +108,50 @@ class LoginScreen extends GetView<LoginController> {
                         validator: controller.validateEmail,
                       ),
                       const SizedBox(height: 16),
-                      Obx(
-                        () => TextFormField(
-                          controller: controller.passwordController,
-                          obscureText: controller.obscurePassword.value,
-                          focusNode: controller.passwordFocus,
-                          autofillHints: const [AutofillHints.password],
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                controller.obscurePassword.toggle();
-                              },
-                              icon: Icon(
-                                controller.obscurePassword.value
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                              ),
+                      TextFormField(
+                        controller: passwordController,
+                        obscureText: obscurePassword,
+                        focusNode: passwordFocus,
+                        autofillHints: const [AutofillHints.password],
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              obscurePassword = !obscurePassword;
+                              setState(() {});
+                            },
+                            icon: Icon(
+                              obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
                             ),
                           ),
-                          validator: controller.validateRequired,
-                          onFieldSubmitted: (value) => controller.login(),
                         ),
+                        validator: controller.validateRequired,
+                        onFieldSubmitted: (value) {
+                          if (formKey.currentState?.validate() == true) {
+                            controller.login(
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
+                          }
+                        },
                       ),
                       const SizedBox(height: 24),
                       Obx(
                         () => ElevatedButton(
                           onPressed: controller.isLoading.value
                               ? null
-                              : controller.login,
+                              : () {
+                                  if (formKey.currentState?.validate() ==
+                                      true) {
+                                    controller.login(
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                    );
+                                  }
+                                },
                           child: controller.isLoading.value
                               ? const SizedBox(
                                   width: 20,

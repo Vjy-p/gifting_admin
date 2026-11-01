@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:gifting_admin/features/enquiry/models/product_model.dart';
+import 'package:gifting_admin/features/catalogues/models/product_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductServices {
@@ -78,33 +78,56 @@ class ProductServices {
     required List<String> customisations,
     required bool isActive,
   }) async {
-    final slug = name
-        .toLowerCase()
-        .trim()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-        .replaceAll(RegExp(r'^-+|-+$'), '');
+    try {
+      final slug = name
+          .toLowerCase()
+          .trim()
+          .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+          .replaceAll(RegExp(r'^-+|-+$'), '');
 
-    final data = <String, dynamic>{
-      'name': name.trim(),
-      'slug': slug,
-      'category': category,
-      'min_price': minPrice,
-      'max_price': maxPrice,
-      'description': description.trim(),
-      'image_url': imageUrl.trim().isEmpty ? null : imageUrl.trim(),
-      'occasions': occasions,
-      'customisations': customisations,
-      'is_active': isActive,
-    };
+      final data = <String, dynamic>{
+        'name': name.trim(),
+        'slug': slug,
+        'category': category,
+        'min_price': minPrice,
+        'max_price': maxPrice,
+        'description': description.trim(),
+        'image_url': imageUrl.trim().isEmpty ? null : imageUrl.trim(),
+        'occasions': occasions,
+        'customisations': customisations,
+        'is_active': isActive,
+      };
 
-    if (id == null) {
-      await _client.from('products').insert(data);
-    } else {
-      await _client.from('products').update(data).eq('id', id);
+      if (id == null) {
+        await _client.from('products').insert(data);
+      } else {
+        await _client.from('products').update(data).eq('id', id);
+      }
+    } on PostgrestException catch (error, stackTrace) {
+      log('Supabase save product error: ${error.message}, $stackTrace');
+      log('Code: ${error.code}');
+      rethrow;
+    } catch (error, stackTrace) {
+      log('Unexpected save product error: $error, $stackTrace');
+
+      rethrow;
     }
   }
 
   Future<void> setActive({required String id, required bool isActive}) async {
-    await _client.from('products').update({'is_active': isActive}).eq('id', id);
+    try {
+      await _client
+          .from('products')
+          .update({'is_active': isActive})
+          .eq('id', id);
+    } on PostgrestException catch (error, stackTrace) {
+      log('Supabase set actvive product error: ${error.message}, $stackTrace');
+      log('Code: ${error.code}');
+      rethrow;
+    } catch (error, stackTrace) {
+      log('Unexpected set active product error: $error, $stackTrace');
+
+      rethrow;
+    }
   }
 }
