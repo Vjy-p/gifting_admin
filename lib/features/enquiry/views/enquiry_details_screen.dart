@@ -56,7 +56,7 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
               ),
               textFieldWidget(
                 label: 'Customisation',
-                value: enquiry.customisations.join(', ') * 10,
+                value: enquiry.customisations.join(', '),
               ),
               textFieldWidget(
                 label: 'Additional message',
@@ -135,6 +135,7 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
                 child: ListView.separated(
                   itemCount: enquiry.products.length,
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.only(bottom: 20),
                   clipBehavior: Clip.none,
                   itemBuilder: (context, index) {
@@ -153,6 +154,15 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
                                   imageUrl: product.imageUrl ?? '',
                                   width: double.infinity,
                                   fit: BoxFit.cover,
+                                  errorWidget: (context, url, error) {
+                                    return Center(
+                                      child: Icon(
+                                        Icons.card_giftcard_outlined,
+                                        size: 46,
+                                        color: AppColors.primary,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),

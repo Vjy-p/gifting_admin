@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gifting_admin/core/theme/app_colors.dart';
-import 'package:gifting_admin/features/enquiry/models/product_model.dart';
+import 'package:gifting_admin/features/catalogues/models/product_model.dart';
 
 class ProductTile extends StatelessWidget {
   const ProductTile({super.key, required this.product, this.onTap});
@@ -50,7 +50,7 @@ class ProductTile extends StatelessWidget {
                     ),
                     Text(
                       product.name,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: AppColors.text,
@@ -69,6 +69,10 @@ class ProductTile extends StatelessWidget {
                       width: double.infinity,
                       child: OutlinedButton(
                         onPressed: onTap,
+                        style: const ButtonStyle(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                        ),
                         child: const Text('View Details'),
                       ),
                     ),

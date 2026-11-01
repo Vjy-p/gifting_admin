@@ -16,15 +16,15 @@ class AppPages {
     GetPage(
       name: AppRoutes.splashScreen,
       page: () => const SplashScreen(),
-      binding: BindingsBuilder(() {
-        Get.lazyPut<LoginController>(() => LoginController());
-      }),
     ),
 
     GetPage(
       name: AppRoutes.adminLogin,
       page: () => const LoginScreen(),
       binding: BindingsBuilder(() {
+        if (Get.isRegistered<LoginController>()) {
+          Get.delete<LoginController>(force: true);
+        }
         Get.lazyPut<LoginController>(() => LoginController());
       }),
     ),

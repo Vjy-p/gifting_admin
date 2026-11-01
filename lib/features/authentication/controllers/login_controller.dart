@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting_admin/core/widgets/custom_toast.dart';
 import 'package:gifting_admin/features/authentication/services/login_services.dart';
@@ -9,14 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../app/routes/app_routes.dart';
 
 class LoginController extends GetxController {
-  final formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  FocusNode emailFocus = FocusNode();
-  final passwordController = TextEditingController();
-  FocusNode passwordFocus = FocusNode();
-
   final isLoading = false.obs;
-  final obscurePassword = true.obs;
 
   final SupabaseClient _client = Supabase.instance.client;
 
@@ -43,14 +35,10 @@ class LoginController extends GetxController {
     return null;
   }
 
-  Future<void> login() async {
+  Future<void> login({required String email, required String password}) async {
     if (isLoading.value) return;
-    if (!(formKey.currentState?.validate() ?? false)) return;
 
-    final email = emailController.text.trim();
-    final password = passwordController.text;
-
-    if (email.isEmpty || password.isEmpty) {
+    if (email.trim().isEmpty || password.trim().isEmpty) {
       customToast(title: 'Required', text: 'Enter your email and password.');
       return;
     }
@@ -59,8 +47,8 @@ class LoginController extends GetxController {
       isLoading.value = true;
 
       final response = await _client.auth.signInWithPassword(
-        email: email,
-        password: password,
+        email: email.trim(),
+        password: password.trim(),
       );
 
       final user = response.user;
@@ -101,17 +89,10 @@ class LoginController extends GetxController {
   }
 
   Future<void> logout() async {
-    LoginServices.setAdminLoggedIn(value: false);
-    await _client.auth.signOut();
+    await LoginServices.logout();
+    if (Get.isRegistered<LoginController>()) {
+      Get.delete<LoginController>(force: true);
+    }
     Get.offAllNamed(AppRoutes.adminLogin);
-  }
-
-  @override
-  void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
-    emailFocus.dispose();
-    passwordFocus.dispose();
-    super.onClose();
   }
 }

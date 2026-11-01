@@ -17,6 +17,7 @@ class WebFilterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

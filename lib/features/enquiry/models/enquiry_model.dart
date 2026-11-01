@@ -1,4 +1,4 @@
-import 'package:gifting_admin/features/enquiry/models/product_model.dart';
+import 'package:gifting_admin/features/catalogues/models/product_model.dart';
 
 class EnquiryModel {
   const EnquiryModel({

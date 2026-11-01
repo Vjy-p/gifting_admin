@@ -4,11 +4,12 @@ import 'package:gifting_admin/core/theme/app_colors.dart';
 import 'package:gifting_admin/core/theme/theme_controller.dart';
 import 'package:gifting_admin/core/widgets/retry_widget.dart';
 import 'package:gifting_admin/features/catalogues/controllers/catalogues_controller.dart';
+import 'package:gifting_admin/features/catalogues/models/product_model.dart';
 import 'package:gifting_admin/features/catalogues/views/product_details_screen.dart';
 import 'package:gifting_admin/features/catalogues/views/widgets/bottom_sheet_filter.dart';
 import 'package:gifting_admin/features/catalogues/views/widgets/product_tile.dart';
 import 'package:gifting_admin/features/catalogues/views/widgets/web_filter_widget.dart';
-import 'package:gifting_admin/features/enquiry/models/product_model.dart';
+import 'package:gifting_admin/features/dashboard/widgets/logout_dialog_box.dart';
 
 class CatalogueScreen extends GetView<CatalogueController> {
   const CatalogueScreen({super.key});
@@ -30,7 +31,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
                 children: [
                   Row(
                     spacing: 10,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Column(
@@ -64,25 +65,39 @@ class CatalogueScreen extends GetView<CatalogueController> {
                           iconSize: 20,
                           icon: const Icon(Icons.filter_alt, size: 20),
                         ),
-                      Obx(
-                        () => IconButton(
-                          tooltip: ThemeController.to.isDarkMode
-                              ? 'Switch to Light Mode'
-                              : 'Switch to Dark Mode',
-                          style: const ButtonStyle(
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          onPressed: () => ThemeController.to.toggleTheme(),
-                          iconSize: 20,
-                          icon: Icon(
-                            ThemeController.to.isDarkMode
-                                ? Icons.light_mode_outlined
-                                : Icons.dark_mode_outlined,
-                            size: 20,
+                      if (MediaQuery.of(context).size.width < 750) ...[
+                        Obx(
+                          () => IconButton(
+                            tooltip: ThemeController.to.isDarkMode
+                                ? 'Switch to Light Mode'
+                                : 'Switch to Dark Mode',
+                            onPressed: () => ThemeController.to.toggleTheme(),
+                            style: IconButton.styleFrom(
+                              backgroundColor: AppColors.surface,
+                              foregroundColor: AppColors.primary,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: VisualDensity.compact,
+                              side: BorderSide(color: AppColors.border),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            icon: Icon(
+                              ThemeController.to.isDarkMode
+                                  ? Icons.light_mode_outlined
+                                  : Icons.dark_mode_outlined,
+                              size: 20,
+                            ),
                           ),
                         ),
-                      ),
+                        IconButton(
+                          tooltip: 'Sign out',
+                          onPressed: () {
+                            openDialogBox();
+                          },
+                          icon: const Icon(Icons.logout),
+                        ),
+                      ],
                     ],
                   ),
                   if (isMobile) selectedFilters(),
@@ -143,6 +158,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
 
           return GridView.builder(
             itemCount: products.length,
+            physics: const BouncingScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
               crossAxisSpacing: 18,

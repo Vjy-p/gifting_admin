@@ -103,7 +103,7 @@ class EnquiryController extends GetxController {
       isLoadingStats.value = true;
       stats.value = await _enquiryServices.getEnquiryStats();
     } catch (e) {
-      Get.snackbar('Error', 'Unable to load enquiry statistics');
+      customToast(title: 'Error', text: 'Unable to load enquiry statistics');
     } finally {
       isLoadingStats.value = false;
     }
