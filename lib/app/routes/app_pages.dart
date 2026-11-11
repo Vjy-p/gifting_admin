@@ -44,6 +44,14 @@ class AppPages {
       }),
     ),
     GetPage(
+      name: '/enquiries',
+      page: () => const DashboardScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<EnquiryController>(() => EnquiryController());
+        Get.lazyPut<CatalogueController>(() => CatalogueController());
+      }),
+    ),
+    GetPage(
       name: AppRoutes.enquiryDetails,
       page: () => EnquiryDetailsScreen(enquiry: Get.arguments),
       binding: BindingsBuilder(() {

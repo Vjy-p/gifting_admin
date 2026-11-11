@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting_admin/core/theme/app_colors.dart';
@@ -23,7 +24,10 @@ class EnquiresScreen extends GetView<EnquiryController> {
           final isMobile = constraints.maxWidth <= 900;
           log('width ${constraints.maxWidth}');
           return Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: kIsWeb ? 10 : 0,
+            ),
             child: Obx(() {
               if (controller.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());

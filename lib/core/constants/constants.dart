@@ -7,4 +7,5 @@ class Constants {
   static const String supbaseAnonKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
   );
+  static const String webVapidKey = String.fromEnvironment('WEB_VAPID_KEY');
 }

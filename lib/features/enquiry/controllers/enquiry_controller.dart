@@ -15,6 +15,8 @@ class EnquiryController extends GetxController {
     : _enquiryServices = enquiryServices ?? EnquiryServices();
 
   final EnquiryServices _enquiryServices;
+  RealtimeChannel? enquiryChannel;
+  RxBool isRealtimeSubscribed = false.obs;
   final enquiries = <EnquiryModel>[].obs;
   final selectedStatus = 'All'.obs;
   final isLoading = false.obs;
@@ -94,14 +96,72 @@ class EnquiryController extends GetxController {
     loadDashboard();
   }
 
+  @override
+  void onClose() {
+    if (enquiryChannel != null) {
+      Supabase.instance.client.removeChannel(enquiryChannel!);
+      enquiryChannel = null;
+    }
+
+    super.onClose();
+  }
+
   Future<void> loadDashboard() async {
     await Future.wait([loadStats(), loadEnquiries()]);
+    subscribeToEnquiryChanges();
+  }
+
+  void subscribeToEnquiryChanges() {
+    if (isRealtimeSubscribed.value) return;
+
+    enquiryChannel = Supabase.instance.client
+        .channel('admin_enquiries_channel')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'enquiries',
+          callback: (payload) {
+            try {
+              final newEnquiry = EnquiryModel.fromJson(
+                Map<String, dynamic>.from(payload.newRecord),
+              );
+
+              // Prevent duplicate records.
+              final alreadyExists = enquiries.any(
+                (item) => item.id == newEnquiry.id,
+              );
+
+              if (!alreadyExists) {
+                enquiries.insert(0, newEnquiry);
+              }
+
+              // Refresh dashboard statistics.
+              loadStats();
+
+              log('New enquiry received: ${newEnquiry.referenceCode}');
+            } catch (e, stackTrace) {
+              log('Realtime enquiry error: $e', stackTrace: stackTrace);
+            }
+          },
+        )
+        .subscribe((status, error) {
+          log('Enquiry realtime status: $status');
+
+          if (error != null) {
+            log('Enquiry realtime error: $error');
+          }
+
+          isRealtimeSubscribed.value =
+              status == RealtimeSubscribeStatus.subscribed;
+        });
   }
 
   Future<void> loadStats() async {
     try {
       isLoadingStats.value = true;
       stats.value = await _enquiryServices.getEnquiryStats();
+      log('count ${stats.value?.total}');
+      isLoadingStats.value = false;
     } catch (e) {
       customToast(title: 'Error', text: 'Unable to load enquiry statistics');
     } finally {
@@ -116,7 +176,16 @@ class EnquiryController extends GetxController {
     errorMessage.value = '';
 
     try {
-      enquiries.assignAll(await _enquiryServices.fetchEnquiries());
+      final fetchedEnquiries = await _enquiryServices.fetchEnquiries();
+
+      final realtimeEnquiries = enquiries
+          .where(
+            (liveItem) =>
+                !fetchedEnquiries.any((item) => item.id == liveItem.id),
+          )
+          .toList();
+
+      enquiries.assignAll([...realtimeEnquiries, ...fetchedEnquiries]);
       if (currentPage.value > totalPages) {
         currentPage.value = 1;
       }

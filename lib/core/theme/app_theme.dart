@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gifting_admin/core/theme/app_colors.dart';
 
 class AppTheme {
@@ -21,6 +22,11 @@ class AppTheme {
         foregroundColor: AppColors.lightText,
         elevation: 0,
         centerTitle: false,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColors.lightBackground,
+          statusBarIconBrightness: Brightness.light, // Android
+          statusBarBrightness: Brightness.dark, // iOS
+        ),
       ),
       cardTheme: CardThemeData(
         color: AppColors.lightSurface,
@@ -32,9 +38,7 @@ class AppTheme {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.lightSurface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
@@ -99,7 +103,10 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.lightPrimary, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.lightPrimary,
+            width: 1.5,
+          ),
         ),
       ),
       dividerColor: AppColors.lightBorder,
@@ -123,6 +130,11 @@ class AppTheme {
         foregroundColor: AppColors.darkText,
         elevation: 0,
         centerTitle: false,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColors.darkBackground,
+          statusBarIconBrightness: Brightness.dark, // Android
+          statusBarBrightness: Brightness.light, // iOS
+        ),
       ),
       cardTheme: CardThemeData(
         color: AppColors.darkSurface,
@@ -203,7 +215,10 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.darkPrimary, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.darkPrimary,
+            width: 1.5,
+          ),
         ),
       ),
       dividerColor: AppColors.darkBorder,

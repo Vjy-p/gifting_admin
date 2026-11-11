@@ -42,17 +42,19 @@ class WebFilterWidget extends StatelessWidget {
             _sectionTitle('Category'),
 
             ...controller.categories.map(
-              (category) => RadioListTile<String>(
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                title: Text(category),
-                value: category,
+              (category) => RadioGroup(
                 groupValue: controller.selectedCategory.value,
                 onChanged: (value) {
                   if (value != null) {
                     controller.selectCategory(value);
                   }
                 },
+                child: RadioListTile<String>(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: Text(category),
+                  value: category,
+                ),
               ),
             ),
 
@@ -79,17 +81,19 @@ class WebFilterWidget extends StatelessWidget {
 
             ...List.generate(
               controller.budgetOptions.length,
-              (index) => RadioListTile<int>(
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                title: Text(controller.budgetOptions[index]),
-                value: index,
+              (index) => RadioGroup(
                 groupValue: controller.selectedBudgetIndex.value,
                 onChanged: (value) {
                   if (value != null) {
                     controller.selectBudget(value);
                   }
                 },
+                child: RadioListTile<int>(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: Text(controller.budgetOptions[index]),
+                  value: index,
+                ),
               ),
             ),
 

@@ -47,11 +47,13 @@ class AppColors {
   static Color get background => _isDark ? darkBackground : lightBackground;
   static Color get surface => _isDark ? darkSurface : lightSurface;
   static Color get text => _isDark ? darkText : lightText;
-  static Color get secondaryText => _isDark ? darkSecondaryText : lightSecondaryText;
+  static Color get secondaryText =>
+      _isDark ? darkSecondaryText : lightSecondaryText;
   static Color get titleText => _isDark ? darkTitleText : lightTitleText;
   static Color get blackText => _isDark ? darkBlackText : lightBlackText;
   static Color get border => _isDark ? darkBorder : lightBorder;
-  static Color get gold => _isDark ? const Color(0xFFD9B982) : const Color(0xFFC5A46D);
+  static Color get gold =>
+      _isDark ? const Color(0xFFD9B982) : const Color(0xFFC5A46D);
 
   // Constants
   static const Color white = Color(0xFFFFFFFF);

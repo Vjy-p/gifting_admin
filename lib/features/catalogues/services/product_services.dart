@@ -11,7 +11,7 @@ class ProductServices {
 
   Future<List<ProductModel>> fetchProducts({
     int page = 0,
-    int limit = 8,
+    int limit = 10,
     String search = '',
     String category = 'All Gifts',
     int? minPrice,
@@ -23,7 +23,7 @@ class ProductServices {
       final from = page * limit;
       final to = from + limit - 1;
 
-      var query = _client.from('products').select().eq('is_active', true);
+      var query = _client.from('products').select('*').eq('is_active', true);
 
       if (category != 'All Gifts') {
         query = query.eq('category', category);

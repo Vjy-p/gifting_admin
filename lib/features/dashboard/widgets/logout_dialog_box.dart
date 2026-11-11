@@ -40,7 +40,7 @@ Future<dynamic> openDialogBox() {
               ElevatedButton(
                 onPressed: () async {
                   Get.back();
-                  await LoginServices.logout();
+                  await LoginServices().logout();
                   if (Get.isRegistered<LoginController>()) {
                     Get.delete<LoginController>(force: true);
                   }
